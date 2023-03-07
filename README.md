@@ -7,7 +7,7 @@ Set the **github secrets** on settings > Secrets and environment variables > Act
 
 Environment variables (**SECRETS**) that you need to set:
 
-- `ACCOUNT_EMAIL` : talenta username
+- `ACCOUNT_EMAIL` : talenta username (make sure to use email login)
 - `ACCOUNT_PASSWORD` : talenta password
 - `GEO_LATITUDE` : geolocation latitude. Example: -7.7865454
 - `GEO_LONGITUDE` : geolocation longitude. Example: 110.3654918
