@@ -21,10 +21,12 @@ const PUBLIC_HOLIDAYS = [
   "23 Mar 2023", // nyepi
   "23 Mar 2023", // cuti bersama nyepi
   "7 Apr 2023", // wafat isa almasih
+  "19 Apr 2023", // idul fitri
+  "20 Apr 2023", // idul fitri
   "21 Apr 2023", // idul fitri
   "24 Apr 2023", // idul fitri
   "25 Apr 2023", // idul fitri
-  "26 Apr 2023", // idul fitri
+  "27 Apr 2023", // cuti
   "1 Mei 2023", // hari buruh
   "18 Mei 2023", // kenaikan isa almasih
   "1 Jun 2023", // hari lahir pancasila
