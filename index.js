@@ -92,13 +92,20 @@ const main = async () => {
   }
 
   const myName = (await page.locator("#navbar-name").textContent()).trim();
-  const whoIsOffToday = await page
-    .locator(".tl-card-small", { hasText: `Who's Off` })
-    .innerText();
 
-  const isOffToday = whoIsOffToday.includes(myName);
+  async function isOffToday(page, myName) {
+    // Wait for the "Who's Off" section to load
+    await page.waitForSelector('.tl-card-small', { timeout: 60000 });
+  
+    // Extract the names of people who are off today
+    const offPeople = await page.$$eval('.tl-leave-list__item .font-weight-bold', elems => elems.map(e => e.innerText));
+  
+    // Check if the user is off today
+    return offPeople.includes(myName);
+  }
 
-  if (isOffToday) {
+  const isUserOffToday = await isOffToday(page, myName);
+  if (isUserOffToday) {
     console.log("You are off today, skipping check in/out...");
     await browser.close();
     return;
@@ -106,7 +113,7 @@ const main = async () => {
 
   // go to "My Attendance Logs"
   await page.click("text=My Attendance Logs");
-  await page.waitForSelector(`h3:text("${myName}")`);
+  await page.waitForSelector('h1:text("My attendance log")');
   console.log(
     "Already inside My Attendance Logs to check holiday or day-off..."
   );
