@@ -82,7 +82,7 @@ const main = async () => {
   console.log("Signing in...");
   await Promise.all([
     page.click("#new-signin-button"),
-    page.waitForNavigation(),
+    page.waitForNavigation({ timeout: 600000 }), // wait up to 600 seconds
   ]);
 
   const dashboardNav = page.getByText("Dashboard");
@@ -113,7 +113,7 @@ const main = async () => {
 
   // go to "My Attendance Logs"
   await page.click("text=My Attendance Logs");
-  await page.waitForSelector('h1:text("My attendance log")');
+  await page.waitForSelector('h1:text("My attendance log")', { timeout: 60000 });
   console.log(
     "Already inside My Attendance Logs to check holiday or day-off..."
   );
