@@ -80,10 +80,8 @@ const main = async () => {
   await page.fill("#user_password", process.env.ACCOUNT_PASSWORD);
 
   console.log("Signing in...");
-  await Promise.all([
-    page.click("#new-signin-button"),
-    page.waitForNavigation({ timeout: 600000 }), // wait up to 600 seconds
-  ]);
+  await page.click("#new-signin-button");
+  await page.waitForSelector('a[href="/employee/dashboard"]', { timeout: 60000 }); // wait up to 600 seconds   
 
   const dashboardNav = page.getByText("Dashboard");
   // check if dashboard nav is exist
