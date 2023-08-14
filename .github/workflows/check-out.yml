@@ -1,12 +1,6 @@
 name: Check-out
+
 on:
-  # schedule every weekdays at 17:00 (UTC+7) / 12:00 (UTC)
-  # in the past, "0 12 * * 1-5" runs at around 19:30 (UTC+7), so I changed it to "30 10 * * 1-5" to run at 17:30 (UTC+7)
-
-  # changed to "0 11 * * 1-5" from "30 10 * * 1-5" expecting will run at around 18:00 (previously around 17:30)
-
-  # -- 24 Feb 2023
-  # changed to multi cron schedule
   schedule:
     - cron: "0 11 * * 1,5"
     - cron: "3 11 * * 2,3"
@@ -14,7 +8,24 @@ on:
   workflow_dispatch:
 
 jobs:
+
+  get-last-success-time:
+    runs-on: ubuntu-latest
+    outputs:
+      last_success_time: ${{ steps.set-time.outputs.time }}
+    steps:
+      - name: Get last success time of check-in.yml
+        id: set-time
+        run: |
+          # Use GitHub API to get the last successful run time of check-in.yml
+          TIME=$(curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/${{ github.repository }}/actions/workflows/check-in.yml/runs?status=success | jq '.workflow_runs[0].created_at')
+          echo "Last successful check-in time: $TIME"
+          echo "::set-output name=time::$TIME"
+
   check-out:
+    needs: get-last-success-time
     env:
       ACCOUNT_EMAIL: ${{ secrets.ACCOUNT_EMAIL }}
       ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD }}
@@ -23,6 +34,15 @@ jobs:
       CHECK_TYPE: "CHECK_OUT"
     runs-on: ubuntu-latest
     steps:
+      - name: Wait if necessary
+        run: |
+          # Implement logic to compute the time difference and delay execution if necessary
+          # Pseudo-code:
+          # CURRENT_TIME = current UTC time
+          # DIFF = CURRENT_TIME - get-last-success-time.outputs.last_success_time
+          # if DIFF < 9 hours:
+          #     sleep for (9 hours - DIFF)
+
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
         with:

@@ -189,3 +189,22 @@ const main = async () => {
 };
 
 main();
+
+async function mainLogic() {
+
+}
+
+const MAX_RETRIES = 3;
+
+for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+        await mainLogic();
+        break;  // exit the loop if successful
+    } catch (error) {
+        if (error.name === 'TimeoutError' && attempt < MAX_RETRIES) {
+            console.log(`Attempt ${attempt} failed due to a timeout. Retrying...`);
+        } else {
+            throw error;  // re-throw the error if it's not a TimeoutError or if we've reached the max retries
+        }
+    }
+}
