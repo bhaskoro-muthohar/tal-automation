@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   dayjs:
     specifier: ^1.11.7
@@ -11,8 +15,8 @@ dependencies:
     specifier: ^1.29.2
     version: 1.29.2
   pnpm:
-    specifier: ^7.30.5
-    version: 7.30.5
+    specifier: ^7.33.4
+    version: 7.33.4
   tiny-invariant:
     specifier: ^1.3.1
     version: 1.3.1
@@ -43,8 +47,8 @@ packages:
     hasBin: true
     dev: false
 
-  /pnpm@7.30.5:
-    resolution: {integrity: sha512-kXiH7+iGhDcm3UVhjb4pzbRYljoT2KVR8WFL37b+c15F9CuaLau0RTozrXx/9snf1JEmGICjRnMM2XArmM01sg==}
+  /pnpm@7.33.4:
+    resolution: {integrity: sha512-xEbf/tkwHpGM/GXq5U/sDSiE6ykLPho+o71PHNRWqkVLm6dJe4G/5Pg619Ow32ovekrr7pii5qtfamujB/+1bA==}
     engines: {node: '>=14.6'}
     hasBin: true
     dev: false
