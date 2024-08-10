@@ -32,6 +32,7 @@ jobs:
       GEO_LATITUDE: ${{ secrets.GEO_LATITUDE }}
       GEO_LONGITUDE: ${{ secrets.GEO_LONGITUDE }}
       CHECK_TYPE: "CHECK_OUT"
+      HEADLESS: "true"
     runs-on: ubuntu-latest
     steps:
       - name: Wait if necessary

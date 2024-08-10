@@ -28,6 +28,7 @@ jobs:
       GEO_LATITUDE: ${{ secrets.GEO_LATITUDE }}
       GEO_LONGITUDE: ${{ secrets.GEO_LONGITUDE }}
       CHECK_TYPE: "CHECK_IN"
+      HEADLESS: "true"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
