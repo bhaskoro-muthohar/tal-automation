@@ -48,6 +48,10 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 6.32.9
+      - name: Check network connection
+        run: |
+          ping -c 5 account.mekari.com
+          curl -I https://account.mekari.com
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
