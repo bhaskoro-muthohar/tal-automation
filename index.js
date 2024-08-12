@@ -41,16 +41,13 @@ const PUBLIC_HOLIDAYS = [
 
 const main = async () => {
   let browser;
+  let page;
   try {
-    const isHeadless = process.env.HEADLESS !== "false"; // Default to true if not set
+    const isHeadless = process.env.HEADLESS !== "false";
     console.log(`Running in ${isHeadless ? 'headless' : 'non-headless'} mode`);
 
     const TODAY = dayjs().tz("Asia/Jakarta").format("D MMM YYYY");
-
-    if (PUBLIC_HOLIDAYS.includes(TODAY)) {
-      console.log("Today is public holiday, skipping check in/out...");
-      return;
-    }
+    console.log(`Today's date: ${TODAY}`);
 
     browser = await playwright["chromium"].launch({
       headless: isHeadless,
@@ -65,25 +62,53 @@ const main = async () => {
       permissions: ["geolocation"],
     });
 
-    const page = await context.newPage();
+    page = await context.newPage();
 
     console.log("Opening login page...");
     await page.goto(
       "https://account.mekari.com/users/sign_in?client_id=TAL-73645&return_to=L2F1dGg_Y2xpZW50X2lkPVRBTC03MzY0NSZyZXNwb25zZV90eXBlPWNvZGUmc2NvcGU9c3NvOnByb2ZpbGU%3D",
-      { timeout: 60000 } // Increase timeout to 60 seconds
+      { timeout: 60000 }
     );
 
-    await page.setViewportSize({ width: 1080, height: 560 });
+    console.log("Waiting for page to load...");
+    await page.waitForLoadState('domcontentloaded', { timeout: 60000 });
 
-    console.log("Filling in account email & password...");
-    await page.waitForSelector('#user_email', { timeout: 60000 });
-    await page.fill("#user_email", process.env.ACCOUNT_EMAIL);
+    console.log("Checking if page loaded correctly...");
+    const pageTitle = await page.title();
+    console.log(`Page title: ${pageTitle}`);
 
-    await page.waitForSelector('#user_password', { timeout: 60000 });
-    await page.fill("#user_password", process.env.ACCOUNT_PASSWORD);
+    if (!pageTitle.includes("Mekari")) {
+      throw new Error(`Unexpected page title: ${pageTitle}`);
+    }
 
-    console.log("Signing in...");
-    await page.click("#new-signin-button");
+    console.log("Waiting for email input...");
+    const emailInput = await page.waitForSelector('#user_email, input[type="email"]', { timeout: 60000, state: 'visible' });
+    if (!emailInput) {
+      throw new Error("Email input not found");
+    }
+
+    console.log("Filling in account email...");
+    await emailInput.fill(process.env.ACCOUNT_EMAIL);
+
+    console.log("Waiting for password input...");
+    const passwordInput = await page.waitForSelector('#user_password, input[type="password"]', { timeout: 60000, state: 'visible' });
+    if (!passwordInput) {
+      throw new Error("Password input not found");
+    }
+
+    console.log("Filling in account password...");
+    await passwordInput.fill(process.env.ACCOUNT_PASSWORD);
+
+    console.log("Waiting for sign-in button...");
+    const signInButton = await page.waitForSelector('#new-signin-button, button[type="submit"]', { timeout: 60000, state: 'visible' });
+    if (!signInButton) {
+      throw new Error("Sign in button not found");
+    }
+
+    console.log("Clicking sign-in button...");
+    await signInButton.click();
+
+    console.log("Waiting for dashboard...");
     await page.waitForSelector('a[href="/employee/dashboard"]', { timeout: 60000 });
 
     const dashboardNav = page.getByText("Dashboard");
