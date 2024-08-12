@@ -65,19 +65,35 @@ const main = async () => {
     page = await context.newPage();
 
     console.log("Opening login page...");
-    await page.goto(
+    const response = await page.goto(
       "https://account.mekari.com/users/sign_in?client_id=TAL-73645&return_to=L2F1dGg_Y2xpZW50X2lkPVRBTC03MzY0NSZyZXNwb25zZV90eXBlPWNvZGUmc2NvcGU9c3NvOnByb2ZpbGU%3D",
       { timeout: 60000 }
     );
+
+    console.log(`Response status: ${response.status()}`);
+    console.log(`Response URL: ${response.url()}`);
 
     console.log("Waiting for page to load...");
     await page.waitForLoadState('domcontentloaded', { timeout: 60000 });
 
     console.log("Checking if page loaded correctly...");
     const pageTitle = await page.title();
-    console.log(`Page title: ${pageTitle}`);
+    console.log(`Page title: "${pageTitle}"`);
+
+    if (!pageTitle) {
+      console.log("Page title is empty. Waiting a bit longer...");
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+      const retryTitle = await page.title();
+      console.log(`Retry page title: "${retryTitle}"`);
+      if (!retryTitle) {
+        throw new Error("Page title is still empty after waiting");
+      }
+    }
 
     if (!pageTitle.includes("Mekari")) {
+      console.log("Unexpected page title. Dumping page content...");
+      const pageContent = await page.content();
+      console.log("Page content:", pageContent);
       throw new Error(`Unexpected page title: ${pageTitle}`);
     }
 
