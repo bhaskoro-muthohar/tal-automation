@@ -11,10 +11,11 @@ dayjs.extend(timezone);
 dotenv.config();
 
 // make sure all env variables are set
-invariant(process.env.GEO_LATITUDE, "secret GEO_LATITUDE is required");
-invariant(process.env.GEO_LONGITUDE, "secret GEO_LONGITUDE is required");
-invariant(process.env.ACCOUNT_EMAIL, "secret ACCOUNT_EMAIL is required");
-invariant(process.env.ACCOUNT_PASSWORD, "secret ACCOUNT_PASSWORD is required");
+const ACCOUNT_EMAIL = process.env.ACCOUNT_EMAIL;
+const ACCOUNT_PASSWORD = process.env.ACCOUNT_PASSWORD;
+const GEO_LATITUDE = process.env.GEO_LATITUDE;
+const GEO_LONGITUDE = process.env.GEO_LONGITUDE;
+const CHECK_TYPE = process.env.CHECK_TYPE;
 
 const PUBLIC_HOLIDAYS = [
   "23 Jan 2023", // cuti bersama imlek
