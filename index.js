@@ -216,18 +216,7 @@ const main = async () => {
   await browser.close();
 };
 
-const runAutomation = async (req, res) => {
-  try {
-    await main();
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Automation completed successfully' }));
-  } catch (error) {
-    console.error('Error:', error);
-    res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: error.message }));
-  }
-};
-
+// Create an HTTP server
 const server = http.createServer((req, res) => {
   if (req.method === 'POST') {
     let body = '';
@@ -236,20 +225,19 @@ const server = http.createServer((req, res) => {
     });
     req.on('end', async () => {
       try {
-        const data = JSON.parse(body);
-        if (data.checkType) {
-          process.env.CHECK_TYPE = data.checkType;
-        }
-        await runAutomation(req, res);
+        console.log('Received request. Starting automation...');
+        await main();
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('Automation completed successfully');
       } catch (error) {
-        console.error('Error:', error);
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Invalid request body' }));
+        console.error('Error during automation:', error);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('An error occurred during automation');
       }
     });
   } else {
-    res.writeHead(405, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Method not allowed' }));
+    res.writeHead(405, { 'Content-Type': 'text/plain' });
+    res.end('Method Not Allowed');
   }
 });
 
@@ -257,11 +245,3 @@ const port = process.env.PORT || 8080;
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-// Allow running the script directly for local testing
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
-    console.error("All retries failed:", error);
-    process.exit(1);
-  });
-}
